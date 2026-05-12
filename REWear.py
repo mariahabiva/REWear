@@ -80,7 +80,6 @@ class database:
 
     #takes entry from wardrobe database and inserts it into the discarded wardrobe
     def discarded_item(self, clothes_id):
-        """Move an item from wardrobe to discarded_wardrobe"""
         self.cursor.execute("SELECT name, image, color, clothing_type, fit, length, neckline, sleeve, rise, style, closure FROM wardrobe WHERE clothes_id = ?", (clothes_id,))
         item = self.cursor.fetchone()
         if item:
@@ -106,7 +105,6 @@ class database:
     
     #comepletely clears the database and resets clothes_id counter
     def clear_database(self):
-        """Clear all data from the database"""
         self.cursor.execute("DELETE FROM wardrobe")
         self.cursor.execute("DELETE FROM discarded_wardrobe")
         self.cursor.execute("DELETE FROM sqlite_sequence WHERE name='wardrobe'")
@@ -226,8 +224,6 @@ class REWearApp:
 
     #extra fields based on the clothing type
     def clothing_type_options(self, event=None):
-        """Add more fields based on clothing type"""
-
         for widget in self.clothing_type_options_frame.winfo_children():
             widget.destroy()
         self.clothing_type_vars = {}
@@ -396,7 +392,6 @@ class REWearApp:
 
     #shows all the details of clothes after clicking on its image in the gallery
     def show_item_details(self, clothes_id):
-        """Show detailed information about a clothing item"""
         self.db.cursor.execute(
             "SELECT clothes_id, name, image, color, clothing_type, fit, length, neckline, sleeve, rise, style, closure FROM wardrobe WHERE clothes_id = ?",
             (clothes_id,)
@@ -692,7 +687,6 @@ class REWearApp:
 
     #switches discarded clothes back into the wardrobe
     def restore_item(self):
-        """Restore a discarded item back to wardrobe"""
         selected_item = self.discarded_tree.selection()
         if not selected_item:
             messagebox.showwarning("No Selection", "Please select an item to restore.")
