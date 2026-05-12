@@ -79,7 +79,7 @@ class database:
         return self.cursor.fetchall()
 
     #takes entry from wardrobe database and inserts it into the discarded wardrobe
-    def discarded_item(self, clothes_id):
+    def discard_item(self, clothes_id):
         self.cursor.execute("SELECT name, image, color, clothing_type, fit, length, neckline, sleeve, rise, style, closure FROM wardrobe WHERE clothes_id = ?", (clothes_id,))
         item = self.cursor.fetchone()
         if item:
@@ -522,15 +522,15 @@ class REWearApp:
         button_frame = tk.Frame(details_window, bg="#FFE6ED")
         button_frame.pack(pady=10)
         
-        tk.Button(button_frame, text="Discard Item", font=("UD Digi Kyokasho NP-B", 12), relief=tk.RAISED, bg = "#CF7486", fg = "#FFE6ED", activebackground = "#EFA8AC", activeforeground = "#FFE6ED", command=lambda: self.discarded_clothing(clothes_id, details_window)).pack(side=tk.LEFT, pady=10)
-        tk.Button(button_frame, text="Delete Entry", font=("UD Digi Kyokasho NP-B", 12), relief=tk.RAISED, bg = "#CF7486", fg = "#FFE6ED", activebackground = "#EFA8AC", activeforeground = "#FFE6ED",  command=lambda : self.delete_item(clothes_id, details_window)).pack(side=tk.LEFT, padx=10)
+        tk.Button(button_frame, text="Discard Item", font=("UD Digi Kyokasho NP-B", 12), relief=tk.RAISED, bg = "#CF7486", fg = "#FFE6ED", activebackground = "#EFA8AC", activeforeground = "#FFE6ED", command=lambda: self.discard_entry(clothes_id, details_window)).pack(side=tk.LEFT, pady=10)
+        tk.Button(button_frame, text="Delete Entry", font=("UD Digi Kyokasho NP-B", 12), relief=tk.RAISED, bg = "#CF7486", fg = "#FFE6ED", activebackground = "#EFA8AC", activeforeground = "#FFE6ED",  command=lambda : self.delete_entry(clothes_id, details_window)).pack(side=tk.LEFT, padx=10)
 
     #puts clothing in the discarded database
-    def discarded_clothing(self, clothes_id, popup_window):
+    def discard_entry(self, clothes_id, popup_window):
         result = messagebox.askyesno("Discard", "Are you sure you want to discard this item? (You can switch it back later!)")
 
         if result:
-            if self.db.discarded_item(clothes_id):
+            if self.db.discard_item(clothes_id):
                 messagebox.showinfo("Discarded", "Item has been discarded.")
                 popup_window.destroy()
                 self.load_wardrobe()
@@ -539,7 +539,7 @@ class REWearApp:
                 messagebox.showerror("Error", "Could not discard item. Please try again!")
 
     #delete a clothing entry
-    def delete_item(self, clothes_id, popup_window):  
+    def delete_entry(self, clothes_id, popup_window):  
         result = messagebox.askyesno("Delete Item", "Are you sure you want to delete this item? (You will have to reenter the item!)")
 
         if result:
