@@ -522,12 +522,18 @@ class REWearApp:
         for tip in tips:
             tk.Label(tips_frame, text=tip, font=("UD Digi Kyokasho NP-R", 12), bg="#FFE6ED", wraplength=450, justify="left").pack(anchor="w", pady=5)
 
-        #discard button is in pop up
-        tk.Button(details_window, text="Discard Item", font=("UD Digi Kyokasho NP-B", 12), relief=tk.RAISED, bg = "#CF7486", fg = "#FFE6ED", activebackground = "#EFA8AC", activeforeground = "#FFE6ED", command=lambda: self.discarded_clothing(clothes_id, details_window)).pack(pady=10)
+        
+        #discard and delete button is in pop up
+        button_frame = tk.Frame(details_window, bg="#FFE6ED")
+        button_frame.pack(pady=10)
+        
+        tk.Button(button_frame, text="Discard Item", font=("UD Digi Kyokasho NP-B", 12), relief=tk.RAISED, bg = "#CF7486", fg = "#FFE6ED", activebackground = "#EFA8AC", activeforeground = "#FFE6ED", command=lambda: self.discarded_clothing(clothes_id, details_window)).pack(side=tk.LEFT, pady=10)
+        tk.Button(button_frame, text="Delete Item", font=("UD Digi Kyokasho NP-B", 12), relief=tk.RAISED, bg = "#CF7486", fg = "#FFE6ED", activebackground = "#EFA8AC", activeforeground = "#FFE6ED",  command=lambda : self.delete_item(clothes_id, details_window)).pack(side=tk.LEFT, padx=10)
 
     #puts clothing in the discarded database
     def discarded_clothing(self, clothes_id, popup_window):
-        result = messagebox.askyesno("Discard", "Are you sure you want to discard this item?")
+        result = messagebox.askyesno("Discard", "Are you sure you want to discard this item? (You can switch it back later!)")
+
         if result:
             if self.db.discarded_item(clothes_id):
                 messagebox.showinfo("Discarded", "Item has been discarded.")
@@ -537,6 +543,26 @@ class REWearApp:
             else:
                 messagebox.showerror("Error", "Could not discard item. Please try again!")
 
+    #delete a clothing entry
+    def delete_item(self, clothes_id, popup_window):  
+        result = messagebox.askyesno("Delete Item", "Are you sure you want to delete this item? (You will have to reenter the item!)")
+
+        if result:
+            try:
+               self.db.cursor.execute(
+                   "DELETE FROM wardrobe WHERE clothes_id = ?", (clothes_id,)
+               )
+               
+               self.db.conn.commit()
+               popup_window.destroy()
+               self.load_wardrobe()
+               messagebox.showinfo("Deleted", "Item has been deleted.")
+            
+            except Exception as e:
+                print(f"Error deleting item: {e}")
+                
+                messagebox.showerror("Error", "Could not delete item. Please try again!")
+   
     #details for after sorting your real clothes
     def next_steps(self):
         details_window = tk.Toplevel(self.root)
